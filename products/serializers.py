@@ -3,7 +3,6 @@
 from rest_framework import serializers
 from products.models import Product, ProductCategory
 from products.utils import extract_features_from_image, serialize_features
-from products.tasks import extract_and_save_features
 
 class ProductCategoryReadSerializer(serializers.ModelSerializer):
     """
