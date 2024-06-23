@@ -49,10 +49,10 @@ class ProductWriteSerializer(serializers.ModelSerializer):
         product = Product.objects.create(**validated_data, category=category)
 
         # Extract and save image features
-        # features = extract_features_from_image(product.image.path)
-        # product.serialize_features(features)
-        # product.save()
-        extract_and_save_features.delay(product.id)
+        features = extract_features_from_image(product.image.path)
+        product.serialize_features(features)
+        product.save()
+        
         return product
 
     def update(self, instance, validated_data):
@@ -66,9 +66,17 @@ class ProductWriteSerializer(serializers.ModelSerializer):
 
         # Extract and save image features if the image has changed
         if "image" in validated_data:
-            # features = extract_features_from_image(instance.image.path)
-            # instance.serialize_features(features)
-            # instance.save()
-            # Use Celery for feature extraction
-            extract_and_save_features.delay(instance.id)
+            features = extract_features_from_image(instance.image.path)
+            instance.serialize_features(features)
+            instance.save()
+            
         return instance
+    
+
+class ImageSearchSerializer(serializers.Serializer):
+    image = serializers.ImageField()
+
+    def validate_image(self, value):
+        if not value:
+            raise serializers.ValidationError("No image uploaded.")
+        return value

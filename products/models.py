@@ -55,7 +55,9 @@ class Product(models.Model):
         return self.name
 
     def serialize_features(self, features):
-        self.features = base64.b64encode(features.tobytes()).decode('utf-8')
+        print("Serialization started from the Model")
+        self.features = features.tobytes()
+        print("Serialization End in the Model")
 
     def deserialize_features(self):
-        return np.frombuffer(base64.b64decode(self.features), dtype=np.float32)
+        return np.frombuffer(self.features, dtype=np.float32)
